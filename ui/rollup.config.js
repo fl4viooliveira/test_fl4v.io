@@ -8,7 +8,6 @@ import { copySync, removeSync } from 'fs-extra'
 import { spassr } from 'spassr'
 import getConfig from '@roxi/routify/lib/utils/config'
 import autoPreprocess from 'svelte-preprocess'
-import postcssImport from 'postcss-import'
 import { injectManifest } from 'rollup-plugin-workbox'
 
 
@@ -17,6 +16,7 @@ const assetsDir = 'assets'
 const buildDir = `${distDir}/build`
 const isNollup = !!process.env.NOLLUP
 const production = !process.env.ROLLUP_WATCH;
+process.env.NODE_ENV = production ? "production" : "development";
 
 // clear previous builds
 removeSync(distDir)
@@ -55,7 +55,7 @@ export default {
             hot: isNollup,
             preprocess: [
                 autoPreprocess({
-                    postcss: { plugins: [postcssImport()] },
+                    postcss: require('./postcss.config.js'),
                     defaults: { style: 'postcss' }
                 })
             ]
